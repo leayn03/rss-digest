@@ -8,5 +8,8 @@
       "Bash(git init:*)",
       "Bash(git add:*)"
     ]
+  },
+  "env": {
+    "PLANNING_WITH_FILES_AUTO_RECOVER": "1"
   }
 }
