@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日资讯报告 - {{DATE}}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        h2 {
+            font-size: 2em;
+            margin: 40px 0 20px 0;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        h2:first-child {
+            margin-top: 0;
+        }
+
+        h3 {
+            font-size: 1.5em;
+            margin: 30px 0 15px 0;
+            color: #444;
+        }
+
+        h4 {
+            font-size: 1.2em;
+            margin: 15px 0 8px 0;
+            color: #555;
+        }
+
+        .article {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 4px solid #667eea;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .article:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.15);
+        }
+
+        .article.featured {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-left: 4px solid #764ba2;
+            position: relative;
+        }
+
+        .article-number {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: #764ba2;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .article h3 a,
+        .article-item h4 a {
+            color: #667eea;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .article h3 a:hover,
+        .article-item h4 a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 12px 0;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .meta span {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            background: white;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .source {
+            color: #667eea;
+        }
+
+        .category {
+            color: #764ba2;
+        }
+
+        .date {
+            color: #888;
+        }
+
+        .summary {
+            margin: 15px 0;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .insight {
+            background: #fff;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 4px;
+            font-style: italic;
+            color: #555;
+        }
+
+        .insight strong {
+            color: #f57c00;
+            font-style: normal;
+        }
+
+        .category-section {
+            margin: 30px 0;
+        }
+
+        .category-section h3 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .count {
+            font-size: 0.8em;
+            opacity: 0.9;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .article-item {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .article-item:last-child {
+            border-bottom: none;
+        }
+
+        .article-item:hover {
+            background: #f8f9fa;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: #f8f9fa;
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            header {
+                padding: 25px;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .article-number {
+                width: 35px;
+                height: 35px;
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 每日资讯报告</h1>
+            <p>{{DATE}} | 共 {{TOTAL_COUNT}} 篇文章</p>
+        </header>
+
+        <div class="content">
+            <h2>📌 精选深度阅读（Top 5）</h2>
+            {{TOP_ARTICLES}}
+
+            <h2>📰 全部资讯</h2>
+            {{ALL_ARTICLES}}
+        </div>
+
+        <footer>
+            <p>本报告由 RSS Digest AI 自动生成 | 生成时间: {{DATE}}</p>
+        </footer>
+    </div>
+</body>
+</html>
