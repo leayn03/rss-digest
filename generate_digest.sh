@@ -135,6 +135,22 @@ if [ -f "$OUTPUT_DIR/digest_$DATE.html" ]; then
     echo "📝 Logs: $LOG_DIR/"
     echo ""
 
+    # Upload to Feishu (optional)
+    if [ -n "$FEISHU_APP_ID" ] && [ -n "$FEISHU_APP_SECRET" ]; then
+        echo "📤 Uploading to Feishu document..."
+        # Use v2 script which supports both append and create modes
+        if python3 scripts/upload_to_feishu_v2.py "$OUTPUT_DIR/digest_$DATE.md" 2>"$LOG_DIR/feishu_$DATE.log"; then
+            echo "✓ Successfully uploaded to Feishu!"
+            if [ -f "$OUTPUT_DIR/digest_${DATE}_feishu_url.txt" ]; then
+                echo "  URL: $(cat $OUTPUT_DIR/digest_${DATE}_feishu_url.txt)"
+            fi
+        else
+            echo "⚠️  Feishu upload failed (check $LOG_DIR/feishu_$DATE.log)"
+            echo "  This is optional - continuing..."
+        fi
+        echo ""
+    fi
+
     # Open report
     echo "Opening HTML report..."
     open "$OUTPUT_DIR/digest_$DATE.html" 2>/dev/null || xdg-open "$OUTPUT_DIR/digest_$DATE.html" 2>/dev/null || echo "Please open: $OUTPUT_DIR/digest_$DATE.html"

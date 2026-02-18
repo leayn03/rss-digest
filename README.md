@@ -13,6 +13,7 @@ AI驱动的RSS资讯深度分析系统，智能抓取指定日期的文章，并
 - ✅ **精美双格式报告**：Markdown + HTML（带交互式标签筛选）
 - ✅ **完整工作流自动化**：一键运行全流程
 - ✅ **灵活时间窗口**：可配置文章时间范围（默认24小时）
+- 🆕 **飞书文档集成**：自动上传报告到飞书文档，方便团队协作
 
 ## 📊 项目结构
 
@@ -33,10 +34,12 @@ rss-digest/
 │   ├── fetch_YYYY-MM-DD.log        # RSS抓取日志
 │   ├── summaries_YYYY-MM-DD.log    # AI摘要生成日志
 │   ├── insights_YYYY-MM-DD.log     # 洞察生成日志
-│   └── report_YYYY-MM-DD.log       # 报告生成日志
+│   ├── report_YYYY-MM-DD.log       # 报告生成日志
+│   └── feishu_YYYY-MM-DD.log       # 飞书上传日志
 ├── output/                         # 生成的报告
 │   ├── digest_YYYY-MM-DD.md        # Markdown报告
-│   └── digest_YYYY-MM-DD.html      # HTML报告
+│   ├── digest_YYYY-MM-DD.html      # HTML报告
+│   └── digest_YYYY-MM-DD_feishu_url.txt  # 飞书文档URL
 └── rss-digest/                     # 核心代码
     ├── opml/                       # OPML订阅文件
     │   └── hn-popular-blogs-2025.opml
@@ -46,6 +49,7 @@ rss-digest/
     │   ├── generate_summaries.py   # 生成AI摘要
     │   ├── select_top10_and_insights.py  # 智能选择深度分析文章
     │   ├── generate_report.py      # 生成智能报告
+    │   ├── upload_to_feishu.py     # 上传到飞书文档
     │   └── requirements.txt        # 依赖包
     └── assets/                     # 资源文件
         ├── report_template.html    # 基础HTML模板
@@ -63,9 +67,37 @@ pip install -r rss-digest/scripts/requirements.txt
 
 依赖包括：
 - `feedparser` - RSS feed解析
-- `markdown` - Markdown转HTML
+- `python-dateutil` - 日期处理
+- `requests` - HTTP请求（飞书API）
+- `python-dotenv` - 环境变量管理
 
-### 2. 运行完整工作流
+### 2. 配置飞书集成（可选）
+
+如需将报告自动上传到飞书文档：
+
+1. 访问 [飞书开放平台](https://open.feishu.cn/app/) 创建应用
+2. 获取 **App ID** 和 **App Secret**
+3. 配置应用权限：`docx:document`（文档读写）、`drive:drive`（云空间访问）
+4. 复制配置模板并填写凭证：
+
+```bash
+cp .env.example .env
+# 编辑 .env 文件，填入你的凭证
+```
+
+5. **测试连接**（推荐）：
+
+```bash
+python3 rss-digest/scripts/test_feishu_connection.py
+```
+
+这会验证你的凭证是否正确，并创建一个测试文档。
+
+**注意**：
+- 如果不配置飞书凭证，脚本仍会正常生成本地报告，只是跳过飞书上传步骤
+- **每个报告创建独立文档** - 不会覆盖已有文档，所有历史报告都会保留
+
+### 3. 运行完整工作流
 
 ```bash
 # 默认：抓取昨天的文章
@@ -87,7 +119,8 @@ pip install -r rss-digest/scripts/requirements.txt
 3. 为所有文章生成200字AI摘要
 4. 生成深度洞察提示词（需要Claude AI）
 5. 生成精美的Markdown和HTML报告
-6. 自动打开HTML报告
+6. 🆕 **自动上传到飞书文档（如已配置）**
+7. 自动打开HTML报告
 
 所有日志文件会自动保存到 `logs/` 目录。
 
@@ -115,9 +148,34 @@ python3 rss-digest/scripts/select_top10_and_insights.py
 # Step 5: 生成报告
 python3 rss-digest/scripts/generate_report.py data/articles.json data/insights.json output/
 
-# Step 6: 打开报告
+# Step 6: 上传到飞书（可选）
+python3 rss-digest/scripts/upload_to_feishu.py output/digest_$(date +%Y-%m-%d).md
+
+# Step 7: 打开报告
 open output/digest_$(date +%Y-%m-%d).html
 ```
+
+### 4. 手动上传到飞书
+
+如果你已经生成了报告，可以单独上传到飞书：
+
+```bash
+# 使用环境变量中的凭证（推荐）
+python3 rss-digest/scripts/upload_to_feishu.py output/digest_2026-02-17.md
+
+# 上传到指定文件夹
+python3 rss-digest/scripts/upload_to_feishu.py output/digest_2026-02-17.md \
+    --folder-token FolderXXXXXX
+
+# 通过命令行提供凭证
+python3 rss-digest/scripts/upload_to_feishu.py output/digest_2026-02-17.md \
+    --app-id cli_xxxxxxxxxxxx \
+    --app-secret your_secret_here
+```
+
+上传成功后，脚本会：
+- 打印飞书文档URL
+- 将URL保存到 `output/digest_YYYY-MM-DD_feishu_url.txt`
 
 ## 📝 配置说明
 

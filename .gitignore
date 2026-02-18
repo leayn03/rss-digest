@@ -33,3 +33,7 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.bak
+
+# Environment variables (sensitive)
+.env
+*.env.local
